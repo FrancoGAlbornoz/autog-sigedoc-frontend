@@ -4,6 +4,7 @@ import Header from './components/layout/Header';
 import Home from './pages/Home';
 import SigedocSelection from './pages/SIGEDOC/SigedocSelect';
 import SigedocAltaForm from './pages/SIGEDOC/SigedocAltaForm';
+import SigedocAltaOptions from './pages/SIGEDOC/SigedocAltaOptions';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
             <Route path="/sigedoc" element={<SigedocSelection />} />
             
             {/* Pantalla 3: Formulario de Alta */}
-            <Route path="/sigedoc/alta" element={<SigedocAltaForm />} />
+            <Route path="/sigedoc/alta/options/formulario" element={<SigedocAltaForm />} />
+            <Route path="/sigedoc/alta/options" element={<SigedocAltaOptions />} />
           </Routes>
         </main>
       </div>

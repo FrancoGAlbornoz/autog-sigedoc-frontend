@@ -29,7 +29,7 @@ const SigedocSelection = () => {
         {opciones.map((opcion) => (
           <div key={opcion.id} className="col-12 col-sm-6 col-lg-4">
             <button
-              onClick={() => opcion.activo && navigate('/sigedoc/alta')}
+             onClick={() => opcion.activo && navigate('/sigedoc/alta/options')}
               className={`card h-100 w-100 shadow-sm border-2 py-5 transition-all ${
                 opcion.activo 
                   ? 'btn btn-outline-primary bg-white text-dark border-info' 
