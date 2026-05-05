@@ -9,30 +9,52 @@ const SubirFirmadoModal = ({ show, handleClose, tramiteId, onSuccess }) => {
   if (!show) return null;
 
   const handleFileChange = (e) => {
+
     const file = e.target.files[0];
-
-    const tiposPermitidos = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-    ];
-
-    if (file) {
-      if (file.type !== "application/pdf") {
-        alert("Por favor, seleccione un archivo PDF");
-        setArchivo(null);
+    if(file){
+      const tiposPermitidos = [
+        "application/pdf",
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+      ];
+  
+      if(!tiposPermitidos.includes(file.type)){
+        alert("Tipo de archivo no permitido");
+        e.target.value=null
+        return
       }
-
-      const sizeMB = file.size / (1024 * 1024);
-
-      if (sizeMB > 10) {
-        alert("El archivo no puede superar los 10MB");
-        setArchivo(null);
-        return;
-      }
+      setArchivo(file)
     }
   };
+
+  const handleConfirmar = async () => {
+    if(!archivo) return alert("Debe seleccionar un archivo")
+
+    setIsUploading(true)
+
+    const formData = new FormData();
+    formData.append("archivo", archivo);
+    formData.append("tramiteId", tramiteId);
+
+    try{
+      await api.post("/tramites/subirFirmado", formData, {
+        headers: {    
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      onSuccess()
+      alert("Archivo subido correctamente")
+    }catch(error){
+      console.error("Error al subir archivo:", error)
+      alert("Error al subir archivo"
+    }finally{
+      setIsUploading(false)
+      setArchivo(null)
+      handleClose()
+    }
+  }
+
 
   return (
     <div>
