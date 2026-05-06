@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
 import api from "../../api/axios";
-
+import Swal from "sweetalert2";
 const SigedocAltaForm = () => {
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const SigedocAltaForm = () => {
     cargo: "",
     telefono: "",
     email: "",
-    detalles: [], 
+    detalles: [],
   });
 
   // 3. CARGAR PISOS
@@ -39,7 +39,7 @@ const SigedocAltaForm = () => {
     cargarPisos();
   }, []);
 
-  // 4. CARGAR OFICINAS (¡Volvimos a tu ruta original que sí funcionaba!)
+  // 4. CARGAR OFICINAS
   useEffect(() => {
     const cargarOficinas = async () => {
       if (!formData.id_piso) {
@@ -70,7 +70,11 @@ const SigedocAltaForm = () => {
   // --- LÓGICA DE AGENTES ---
   const agregarAgente = () => {
     if (formData.detalles.length >= 5) {
-      alert("Por seguridad y formato de la nota, solo se pueden cargar hasta 5 agentes por formulario.");
+      Swal.fire({
+        icon: "warning",
+        title: "Límite alcanzado",
+        text: "Por seguridad y formato de la nota, solo se pueden cargar hasta 5 agentes por formulario.",
+      });
       return;
     }
 
@@ -106,72 +110,109 @@ const SigedocAltaForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones
+    // Validaciones con Swal
     if (formData.detalles.length === 0) {
-      alert("Error: Debe agregar al menos un agente a la lista para generar el formulario.");
+      Swal.fire({
+        icon: "error",
+        title: "Faltan agentes",
+        text: "Debe agregar al menos un agente a la lista para generar el formulario.",
+      });
       return;
     }
 
-    const cuilRegex = /^\d{11}$/; 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+    const cuilRegex = /^\d{11}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(formData.email)) {
-      alert("Error: El email institucional del Responsable no tiene un formato válido.");
+      Swal.fire({
+        icon: "error",
+        title: "Email inválido",
+        text: "El email institucional del Responsable no tiene un formato válido.",
+      });
       return;
     }
 
     for (let i = 0; i < formData.detalles.length; i++) {
       const agente = formData.detalles[i];
       if (!cuilRegex.test(agente.cuil)) {
-        alert(`Error en fila ${i + 1}: El CUIL debe tener exactamente 11 números, sin guiones ni espacios.`);
+        Swal.fire({
+          icon: "error",
+          title: `Error en fila ${i + 1}`,
+          text: "El CUIL debe tener exactamente 11 números, sin guiones ni espacios.",
+        });
         return;
       }
       if (!emailRegex.test(agente.mail)) {
-        alert(`Error en fila ${i + 1}: El correo no tiene un formato válido.`);
+        Swal.fire({
+          icon: "error",
+          title: `Error en fila ${i + 1}`,
+          text: "El correo no tiene un formato válido.",
+        });
         return;
       }
     }
 
     try {
       console.log("Paso 1: Guardando datos en la BD...");
-      
-      // POST para crear el trámite
+
       const resCrear = await api.post("/tramites", formData);
-      
-      // Mapeamos exactamente a la estructura que vimos en tu consola:
-      const idTramiteGenerado = resCrear.data?.data?.tramite?.id_tramite; 
+      const idTramiteGenerado = resCrear.data?.data?.tramite?.id_tramite;
 
       if (!idTramiteGenerado) {
-        throw new Error("El trámite se guardó, pero no pudimos leer el ID de la respuesta.");
+        throw new Error(
+          "El trámite se guardó, pero no pudimos leer el ID de la respuesta.",
+        );
       }
 
-      console.log("Paso 2: Descargando DOCX del trámite ID:", idTramiteGenerado);
+      console.log(
+        "Paso 2: Descargando DOCX del trámite ID:",
+        idTramiteGenerado,
+      );
 
-      // GET para descargar el documento generado
       const resArchivo = await api.get(`/tramites/${idTramiteGenerado}/pdf`, {
-        responseType: "blob", 
+        responseType: "blob",
       });
 
-      // Forzar la descarga en el navegador
       const url = window.URL.createObjectURL(new Blob([resArchivo.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `Alta_SIGEDOC_Tramite_${idTramiteGenerado}.docx`); 
-      
+      link.setAttribute(
+        "download",
+        `Alta_SIGEDOC_Tramite_${idTramiteGenerado}.docx`,
+      );
+
       document.body.appendChild(link);
       link.click();
-      
+
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      alert("¡Trámite guardado y documento generado con éxito!");
-      
-      // Volvemos a la pantalla anterior después del éxito
-      navigate("/sigedoc/alta/options"); 
-
+      // SweetAlert de Éxito HERMOSO
+      Swal.fire({
+        icon: "success",
+        title: "¡Formulario Generado!",
+        html: `
+          El trámite se guardó y el documento se descargó con éxito.<br/><br/>
+          Anote su número de trámite:<br/>
+          <span style="font-size: 2rem; font-weight: bold; color: #0d6efd;">#${idTramiteGenerado}</span><br/><br/>
+          Lo necesitará más tarde para subir el archivo firmado.
+        `,
+        confirmButtonText: "Entendido",
+        confirmButtonColor: "#0d6efd",
+        allowOutsideClick: false, // Obliga al usuario a hacer clic en Entendido
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Recién cuando el usuario lee y da OK, lo mandamos para atrás
+          navigate("/sigedoc/alta/options");
+        }
+      });
     } catch (error) {
       console.error("Error en el proceso:", error);
-      alert("Hubo un error al procesar el trámite. Revisá la consola.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Hubo un error al procesar el trámite. Revisá la consola para más detalles.",
+      });
     }
   };
 
@@ -314,8 +355,10 @@ const SigedocAltaForm = () => {
                 onClick={agregarAgente}
                 disabled={formData.detalles.length >= 5}
               >
-                <Plus size={16} className="me-1" /> 
-                {formData.detalles.length >= 5 ? "Límite alcanzado (Máx 5)" : "Agregar Agente"}
+                <Plus size={16} className="me-1" />
+                {formData.detalles.length >= 5
+                  ? "Límite alcanzado (Máx 5)"
+                  : "Agregar Agente"}
               </button>
             </h5>
 
@@ -351,7 +394,11 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm"
                             value={agente.apellido}
                             onChange={(e) =>
-                              handleAgenteChange(index, "apellido", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "apellido",
+                                e.target.value,
+                              )
                             }
                             required
                           />
@@ -362,7 +409,11 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm"
                             value={agente.nombres}
                             onChange={(e) =>
-                              handleAgenteChange(index, "nombres", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "nombres",
+                                e.target.value,
+                              )
                             }
                             required
                           />
@@ -373,7 +424,10 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm text-center"
                             value={agente.cuil}
                             onChange={(e) => {
-                              const soloNumeros = e.target.value.replace(/\D/g, "");
+                              const soloNumeros = e.target.value.replace(
+                                /\D/g,
+                                "",
+                              );
                               handleAgenteChange(index, "cuil", soloNumeros);
                             }}
                             maxLength={11}
@@ -398,7 +452,11 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm"
                             value={agente.telefono}
                             onChange={(e) =>
-                              handleAgenteChange(index, "telefono", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "telefono",
+                                e.target.value,
+                              )
                             }
                           />
                         </td>
@@ -408,7 +466,11 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm"
                             value={agente.perfil}
                             onChange={(e) =>
-                              handleAgenteChange(index, "perfil", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "perfil",
+                                e.target.value,
+                              )
                             }
                             placeholder="Ej: Admin"
                           />
