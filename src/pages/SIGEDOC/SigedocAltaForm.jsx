@@ -194,8 +194,9 @@ const SigedocAltaForm = () => {
         html: `
           El trámite se guardó y el documento se descargó con éxito.<br/><br/>
           Anote su número de trámite:<br/>
-          <span style="font-size: 2rem; font-weight: bold; color: #0d6efd;">#${idTramiteGenerado}</span><br/><br/>
+          <span style="font-size: 2rem; font-weight: bold; color: #0d6efd;">${idTramiteGenerado}</span><br/><br/>
           Lo necesitará más tarde para subir el archivo firmado.
+          RECUERDE QUE EL DOCUMENTO DEBE ESTAR EN 1 SOLA HOJA Y FIRMADO.
         `,
         confirmButtonText: "Entendido",
         confirmButtonColor: "#0d6efd",
