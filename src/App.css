@@ -1,0 +1,101 @@
+/* --- VARIABLES INSTITUCIONALES --- */
+:root {
+  --app-primary: #004A81;
+  --app-secondary: #0081C3;
+  --app-bg: #FFFFFF;
+  --app-surface: #F5F5F5;
+  --app-error: #B00020;
+  --app-text-main: #1D1D1D;
+  --app-text-secondary: #757575;
+}
+
+/* 1. Fondo base de toda la App */
+body {
+  background-color: var(--app-surface) !important;
+  color: var(--app-text-main) !important;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. Sobrescribir Clases de Bootstrap (Magia Global) */
+
+/* Botones Primarios */
+.btn-primary {
+  background-color: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+.btn-primary:hover {
+  background-color: #003661 !important;
+  border-color: #003661 !important;
+}
+
+/* Botones Outline */
+.btn-outline-primary {
+  color: var(--app-primary) !important;
+  border-color: var(--app-primary) !important;
+}
+.btn-outline-primary:hover {
+  background-color: var(--app-primary) !important;
+  color: white !important;
+}
+
+/* Textos y Links */
+.text-primary { color: var(--app-primary) !important; }
+.bg-primary { background-color: var(--app-primary) !important; }
+
+/* Badges y alertas secundarias */
+.bg-info { background-color: var(--app-secondary) !important; }
+.badge.bg-secondary { background-color: var(--app-text-secondary) !important; }
+
+/* Tarjetas (Cards) globales */
+.card {
+  border: none !important;
+  border-radius: 12px !important;
+  background-color: var(--app-bg) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+/* Tablas Responsivas */
+.table {
+  color: var(--app-text-main) !important;
+}
+.table thead th {
+  background-color: var(--app-bg) !important;
+  color: var(--app-text-secondary) !important;
+  border-bottom: 2px solid var(--app-surface) !important;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+/* 3. Ajustes para Celulares (Responsive) */
+@media (max-width: 768px) {
+  h1, .h1 { font-size: 1.8rem !important; }
+  h2, .h2 { font-size: 1.5rem !important; }
+  .container-fluid { padding-left: 1rem !important; padding-right: 1rem !important; }
+  
+  /* Evitar que las tablas rompan el layout */
+  .table-responsive {
+    border: 0 !important;
+  }
+}
+
+/* --- FIX PARA ICONOS EN HOVER DE TARJETAS --- */
+/* Cuando pasamos el mouse por el botón outline, forzamos a que los íconos se vuelvan blancos */
+.btn-outline-primary:hover svg,
+.btn-outline-primary:hover .text-primary,
+.btn-outline-primary:hover .text-success {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+}
+
+/* Y si en el futuro usas la clase btn-outline-app que creamos, también lo atajamos: */
+.btn-outline-app:hover svg,
+.btn-outline-app:hover .text-app-primary,
+.btn-outline-app:hover .text-success {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+}
