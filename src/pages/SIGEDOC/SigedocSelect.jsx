@@ -7,8 +7,9 @@ const SigedocSelection = () => {
 
   const opciones = [
     { id: 1, nombre: "ALTA", activo: true },
-    { id: 2, nombre: "BAJA", activo: false },
-    { id: 3, nombre: "MODIFICACION", activo: false },
+    { id: 2, nombre: "BAJA", activo: true },
+    { id: 3, nombre: "INSTALACION SIGEDOC", activo: true },
+    { id: 4, nombre: "MODIFICACION", activo: false },
   ];
 
   // --- LÓGICA DEL MODAL PARA ADMINS ---
@@ -69,7 +70,17 @@ const SigedocSelection = () => {
         {opciones.map((opcion) => (
           <div key={opcion.id} className="col-12 col-sm-6 col-lg-4">
             <button
-              onClick={() => opcion.activo && navigate("/sigedoc/alta/options")}
+              onClick={() =>
+                (opcion.activo &&
+                  opcion.nombre === "ALTA" &&
+                  navigate("/sigedoc/alta/options")) ||
+                (opcion.activo &&
+                  opcion.nombre === "BAJA" &&
+                  navigate("/sigedoc/baja/options")) ||
+                (opcion.activo &&
+                  opcion.nombre === "INSTALACION SIGEDOC" &&
+                  navigate("/sigedoc/instalacion/options"))
+              }
               className={`card h-100 w-100 shadow-sm border-2 py-5 transition-all ${
                 opcion.activo
                   ? "btn btn-outline-primary bg-white text-dark border-info"
@@ -105,7 +116,7 @@ const SigedocSelection = () => {
         <button
           onClick={handleAccesoAdmin}
           className="btn btn-link text-muted border-0 p-0"
-          style={{ opacity: 0.4, textDecoration: "none" }} // Opacidad subida a 0.4
+          style={{ opacity: 0.9, textDecoration: "none" }} // Opacidad subida a 0.4
           title="Gestión Interna"
         >
           <Lock size={18} />
