@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
 import api from "../../api/axios";
 import Swal from "sweetalert2";
+
 const SigedocAltaForm = () => {
   const navigate = useNavigate();
 
@@ -89,6 +90,7 @@ const SigedocAltaForm = () => {
           mail: "",
           telefono: "",
           perfil: "",
+          condicion: "", // <--- AGREGAMOS LA CONDICIÓN ACÁ
           id_oficina: formData.id_oficina,
         },
       ],
@@ -200,10 +202,9 @@ const SigedocAltaForm = () => {
         `,
         confirmButtonText: "Entendido",
         confirmButtonColor: "#0d6efd",
-        allowOutsideClick: false, // Obliga al usuario a hacer clic en Entendido
+        allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          // Recién cuando el usuario lee y da OK, lo mandamos para atrás
           navigate("/sigedoc/alta/options");
         }
       });
@@ -376,13 +377,15 @@ const SigedocAltaForm = () => {
                     <th>Mail</th>
                     <th>Teléfono</th>
                     <th>Perfil</th>
+                    <th>Situación</th> {/* <--- NUEVO ENCABEZADO */}
                     <th style={{ width: "40px" }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {formData.detalles.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="text-center text-muted py-4">
+                      {/* Subimos el colSpan a 8 porque agregamos una columna */}
+                      <td colSpan="8" className="text-center text-muted py-4">
                         No hay agentes agregados.
                       </td>
                     </tr>
@@ -462,9 +465,9 @@ const SigedocAltaForm = () => {
                           />
                         </td>
                         <td>
-                          <input
-                            type="text"
-                            className="form-control form-control-sm"
+                          {/* <--- NUEVO SELECT DE PERFIL ---> */}
+                          <select
+                            className="form-select form-select-sm"
                             value={agente.perfil}
                             onChange={(e) =>
                               handleAgenteChange(
@@ -473,8 +476,37 @@ const SigedocAltaForm = () => {
                                 e.target.value,
                               )
                             }
-                            placeholder="Ej: Admin"
-                          />
+                            required
+                          >
+                            <option value="">Seleccione...</option>
+                            <option value="Mesa de entrada">
+                              Mesa de entrada
+                            </option>
+                            <option value="Consulta">Consulta</option>
+                            <option value="Oficina">Oficina</option>
+                          </select>
+                        </td>
+                        <td>
+                          {/* <--- NUEVO SELECT DE CONDICIÓN ---> */}
+                          <select
+                            className="form-select form-select-sm"
+                            value={agente.condicion}
+                            onChange={(e) =>
+                              handleAgenteChange(
+                                index,
+                                "condicion",
+                                e.target.value,
+                              )
+                            }
+                            required
+                          >
+                            <option value="">Seleccione...</option>
+                            <option value="Pasante">Pasante</option>
+                            <option value="Agente Permanente">
+                              Agente Permanente
+                            </option>
+                            <option value="Contratado">Contratado</option>
+                          </select>
                         </td>
                         <td className="text-center">
                           <button
