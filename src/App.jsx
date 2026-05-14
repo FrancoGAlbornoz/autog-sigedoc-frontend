@@ -8,8 +8,12 @@ import SigedocAltaOptions from "./pages/SIGEDOC/SigedocAltaOptions";
 import SigedocAltaForm from "./pages/SIGEDOC/SigedocAltaForm";
 
 // --- IMPORTAMOS LOS COMPONENTES DE INSTALACIÓN ---
-import SigedocInstalacionOptions from "./pages/SIGEDOC/SigedocInstalacionOptions"; // <--- Faltaba importar este
+import SigedocInstalacionOptions from "./pages/SIGEDOC/SigedocInstalacionOptions";
 import SigedocInstalacionForm from "./pages/SIGEDOC/SigedocInstalacionForm";
+
+// --- IMPORTAMOS LOS COMPONENTES DE BAJA ---
+import SigedocBajaOptions from "./pages/SIGEDOC/SigedocBajaOptions";
+import SigedocBajaForm from "./pages/SIGEDOC/SigedocBajaForm";
 
 import AdminSigedoc from "./pages/SIGEDOC/admin/AdminSigedoc";
 
@@ -51,6 +55,18 @@ function App() {
             <Route
               path="/sigedoc/instalacion/options/formulario"
               element={<SigedocInstalacionForm />}
+            />
+
+            {/* --- RUTAS DE BAJA --- */}
+            {/* Pantalla intermedia (Generar o Subir) */}
+            <Route
+              path="/sigedoc/baja/options"
+              element={<SigedocBajaOptions />}
+            />
+            {/* Formulario para cargar datos */}
+            <Route
+              path="/sigedoc/baja/options/formulario"
+              element={<SigedocBajaForm />}
             />
           </Routes>
         </main>
