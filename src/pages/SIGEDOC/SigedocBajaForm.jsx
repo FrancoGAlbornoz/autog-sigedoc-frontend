@@ -352,7 +352,7 @@ const SigedocBajaForm = () => {
                     <input
                       type="text"
                       className="form-control form-control-lg bg-light"
-                      placeholder="Ej: fgalbornoz"
+                      placeholder="Ej: user123"
                       value={detalle.usuario_sigedoc}
                       onChange={(e) =>
                         handleUsuarioChange(index, e.target.value)
