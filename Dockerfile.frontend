@@ -3,14 +3,14 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
+COPY . . 
 RUN npm run build
 
-# --- ETAPA 2: NGINX (Servidor Web) ---
+# --- ETAPA 2: NGINX (Servidor Web) --- el mas usado e implementado
 FROM nginx:alpine
-# Copiamos la carpeta /dist compilada a la carpeta de Nginx
+# copiamos la carpeta /dist compilada a la carpeta de Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
-# Exponemos el puerto 80
+# exponemos el puerto 80
 EXPOSE 80
-# Arrancamos Nginx
+# arrancamos Nginx
 CMD ["nginx", "-g", "daemon off;"]
