@@ -7,6 +7,33 @@ import Swal from "sweetalert2";
 const SigedocInstalacionForm = () => {
   const navigate = useNavigate();
 
+  // --- NUEVO: RECUPERADOR DE TRÁMITES COLGADOS ---
+  useEffect(() => {
+    const tramiteColgado = localStorage.getItem("tramitePendienteSigedoc");
+    if (tramiteColgado) {
+      const { id_tramite } = JSON.parse(tramiteColgado);
+      
+      Swal.fire({
+        icon: "info",
+        title: "¡Tenés un trámite pendiente!",
+        text: `El trámite de INSTALACIÓN N° ${id_tramite} está esperando que subas el documento firmado. ¿Querés ir a subirlo ahora?`,
+        showCancelButton: true,
+        confirmButtonText: "Sí, ir a subirlo",
+        cancelButtonText: "No, descartar trámite",
+        confirmButtonColor: "#0d6efd",
+        cancelButtonColor: "#dc3545",
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/sigedoc/instalacion/options"); // <-- Ruta específica de Instalación
+        } else {
+          // Si eligen descartar, limpiamos la memoria
+          localStorage.removeItem("tramitePendienteSigedoc");
+        }
+      });
+    }
+  }, [navigate]);
+
   // 1. ESTADOS PARA LOS SELECTS
   const [pisos, setPisos] = useState([]);
   const [oficinas, setOficinas] = useState([]);
@@ -117,6 +144,12 @@ const SigedocInstalacionForm = () => {
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
 
+      // --- NUEVO: GUARDAMOS EL ID EN LOCALSTORAGE ---
+      localStorage.setItem(
+        "tramitePendienteSigedoc",
+        JSON.stringify({ id_tramite: idTramiteGenerado })
+      );
+
       Swal.fire({
         icon: "success",
         title: "¡Formulario Generado!",
@@ -131,7 +164,7 @@ const SigedocInstalacionForm = () => {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate("/sigedoc/instalacion/options"); // O la ruta a donde quieras volver
+          navigate("/sigedoc/instalacion/options");
         }
       });
     } catch (error) {
