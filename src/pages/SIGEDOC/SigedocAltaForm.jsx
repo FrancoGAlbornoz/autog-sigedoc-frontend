@@ -9,10 +9,20 @@ const SigedocAltaForm = () => {
 
   // --- NUEVO: RECUPERADOR DE TRÁMITES COLGADOS ---
   useEffect(() => {
-    const tramiteColgado = localStorage.getItem("tramitePendienteSigedoc");
+    console.log("🚀 [DEBUG] Se cargó la pantalla del formulario");
+
+    const tramiteColgado = localStorage.getItem("tramitePendienteAltaSigedoc");
+    console.log(
+      "📦 [DEBUG] ¿Hay trámite colgado en localStorage?:",
+      tramiteColgado,
+    );
+
     if (tramiteColgado) {
+      console.log(
+        "⚠️ [DEBUG] Entró al IF. Mostrando modal de trámite pendiente...",
+      );
       const { id_tramite } = JSON.parse(tramiteColgado);
-      
+
       Swal.fire({
         icon: "info",
         title: "¡Tenés un trámite pendiente!",
@@ -25,14 +35,21 @@ const SigedocAltaForm = () => {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate("/sigedoc/alta/options");
+          console.log(
+            "👆 [DEBUG] El usuario eligió IR A SUBIRLO. Navegando...",
+          );
+          navigate("/sigedoc/instalacion/options"); // O la ruta que corresponda
         } else {
-          // Si eligen descartar, limpiamos la memoria para que no les vuelva a salir
-          localStorage.removeItem("tramitePendienteSigedoc");
+          console.log(
+            "🗑️ [DEBUG] El usuario eligió DESCARTAR. Borrando de localStorage...",
+          );
+          localStorage.removeItem("tramitePendienteAltaSigedoc");
         }
       });
+    } else {
+      console.log("✅ [DEBUG] No hay trámites colgados. Formulario limpio.");
     }
-  }, [navigate]);
+  }, []);
 
   // 1. ESTADOS PARA LOS SELECTS
   const [pisos, setPisos] = useState([]);
@@ -193,7 +210,10 @@ const SigedocAltaForm = () => {
         );
       }
 
-      console.log("Paso 2: Descargando DOCX del trámite ID:", idTramiteGenerado);
+      console.log(
+        "Paso 2: Descargando DOCX del trámite ID:",
+        idTramiteGenerado,
+      );
 
       const resArchivo = await api.get(`/tramites/${idTramiteGenerado}/pdf`, {
         responseType: "blob",
@@ -214,8 +234,8 @@ const SigedocAltaForm = () => {
 
       // --- NUEVO: GUARDAMOS EL ID EN LOCALSTORAGE ---
       localStorage.setItem(
-        "tramitePendienteSigedoc",
-        JSON.stringify({ id_tramite: idTramiteGenerado })
+        "tramitePendienteAltaSigedoc",
+        JSON.stringify({ id_tramite: idTramiteGenerado }),
       );
 
       // SweetAlert de Éxito HERMOSO
@@ -426,7 +446,11 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm"
                             value={agente.apellido}
                             onChange={(e) =>
-                              handleAgenteChange(index, "apellido", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "apellido",
+                                e.target.value,
+                              )
                             }
                             required
                           />
@@ -437,7 +461,11 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm"
                             value={agente.nombres}
                             onChange={(e) =>
-                              handleAgenteChange(index, "nombres", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "nombres",
+                                e.target.value,
+                              )
                             }
                             required
                           />
@@ -448,7 +476,10 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm text-center"
                             value={agente.cuil}
                             onChange={(e) => {
-                              const soloNumeros = e.target.value.replace(/\D/g, "");
+                              const soloNumeros = e.target.value.replace(
+                                /\D/g,
+                                "",
+                              );
                               handleAgenteChange(index, "cuil", soloNumeros);
                             }}
                             maxLength={11}
@@ -473,7 +504,11 @@ const SigedocAltaForm = () => {
                             className="form-control form-control-sm"
                             value={agente.telefono}
                             onChange={(e) =>
-                              handleAgenteChange(index, "telefono", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "telefono",
+                                e.target.value,
+                              )
                             }
                           />
                         </td>
@@ -482,12 +517,18 @@ const SigedocAltaForm = () => {
                             className="form-select form-select-sm"
                             value={agente.perfil}
                             onChange={(e) =>
-                              handleAgenteChange(index, "perfil", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "perfil",
+                                e.target.value,
+                              )
                             }
                             required
                           >
                             <option value="">Seleccione...</option>
-                            <option value="Mesa de entrada">Mesa de entrada</option>
+                            <option value="Mesa de entrada">
+                              Mesa de entrada
+                            </option>
                             <option value="Consulta">Consulta</option>
                             <option value="Oficina">Oficina</option>
                           </select>
@@ -497,13 +538,19 @@ const SigedocAltaForm = () => {
                             className="form-select form-select-sm"
                             value={agente.condicion}
                             onChange={(e) =>
-                              handleAgenteChange(index, "condicion", e.target.value)
+                              handleAgenteChange(
+                                index,
+                                "condicion",
+                                e.target.value,
+                              )
                             }
                             required
                           >
                             <option value="">Seleccione...</option>
                             <option value="Pasante">Pasante</option>
-                            <option value="Agente Permanente">Agente Permanente</option>
+                            <option value="Agente Permanente">
+                              Agente Permanente
+                            </option>
                             <option value="Contratado">Contratado</option>
                           </select>
                         </td>
