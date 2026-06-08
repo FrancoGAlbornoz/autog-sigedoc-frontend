@@ -9,14 +9,26 @@ const SigedocInstalacionForm = () => {
 
   // --- NUEVO: RECUPERADOR DE TRÁMITES COLGADOS ---
   useEffect(() => {
-    const tramiteColgado = localStorage.getItem("tramitePendienteSigedoc");
+    console.log("🚀 [DEBUG] Se cargó la pantalla del formulario");
+
+    const tramiteColgado = localStorage.getItem(
+      "tramitePendienteInstalacionSigedoc",
+    );
+    console.log(
+      "📦 [DEBUG] ¿Hay trámite colgado en localStorage?:",
+      tramiteColgado,
+    );
+
     if (tramiteColgado) {
+      console.log(
+        "⚠️ [DEBUG] Entró al IF. Mostrando modal de trámite pendiente...",
+      );
       const { id_tramite } = JSON.parse(tramiteColgado);
-      
+
       Swal.fire({
         icon: "info",
         title: "¡Tenés un trámite pendiente!",
-        text: `El trámite de INSTALACIÓN N° ${id_tramite} está esperando que subas el documento firmado. ¿Querés ir a subirlo ahora?`,
+        text: `El trámite N° ${id_tramite} está esperando que subas el documento firmado. ¿Querés ir a subirlo ahora?`,
         showCancelButton: true,
         confirmButtonText: "Sí, ir a subirlo",
         cancelButtonText: "No, descartar trámite",
@@ -25,14 +37,21 @@ const SigedocInstalacionForm = () => {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate("/sigedoc/instalacion/options"); // <-- Ruta específica de Instalación
+          console.log(
+            "👆 [DEBUG] El usuario eligió IR A SUBIRLO. Navegando...",
+          );
+          navigate("/sigedoc/instalacion/options"); // O la ruta que corresponda
         } else {
-          // Si eligen descartar, limpiamos la memoria
-          localStorage.removeItem("tramitePendienteSigedoc");
+          console.log(
+            "🗑️ [DEBUG] El usuario eligió DESCARTAR. Borrando de localStorage...",
+          );
+          localStorage.removeItem("tramitePendienteInstalacionSigedoc");
         }
       });
+    } else {
+      console.log("✅ [DEBUG] No hay trámites colgados. Formulario limpio.");
     }
-  }, [navigate]);
+  }, []);
 
   // 1. ESTADOS PARA LOS SELECTS
   const [pisos, setPisos] = useState([]);
@@ -146,8 +165,8 @@ const SigedocInstalacionForm = () => {
 
       // --- NUEVO: GUARDAMOS EL ID EN LOCALSTORAGE ---
       localStorage.setItem(
-        "tramitePendienteSigedoc",
-        JSON.stringify({ id_tramite: idTramiteGenerado })
+        "tramitePendienteInstalacionSigedoc",
+        JSON.stringify({ id_tramite: idTramiteGenerado }),
       );
 
       Swal.fire({
