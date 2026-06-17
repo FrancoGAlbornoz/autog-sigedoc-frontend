@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Header from "./components/layout/Header";
 import Home from "./pages/Home";
 import SigedocSelection from "./pages/SIGEDOC/SigedocSelection";
@@ -68,6 +73,7 @@ function App() {
               path="/sigedoc/baja/options/formulario"
               element={<SigedocBajaForm />}
             />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
       </div>
