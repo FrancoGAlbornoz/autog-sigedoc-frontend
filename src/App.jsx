@@ -29,17 +29,12 @@ function App() {
         <Header />
         <main>
           <Routes>
-            {/* Pantalla 1: Selección de Sistema */}
             <Route path="/" element={<Home />} />
 
-            {/* Pantalla 2: Selección de Trámite (Alta, Baja, Mod, etc) */}
             <Route path="/sigedoc" element={<SigedocSelection />} />
-
-            {/* Panel de Admin Ninja */}
             <Route path="/sigedoc/admin" element={<AdminSigedoc />} />
 
             {/* --- RUTAS DE ALTA --- */}
-            {/* Pantalla intermedia (Generar o Subir) */}
             <Route
               path="/sigedoc/alta/options"
               element={<SigedocAltaOptions />}
@@ -51,7 +46,6 @@ function App() {
             />
 
             {/* --- RUTAS DE INSTALACIÓN --- */}
-            {/* Pantalla intermedia (Generar o Subir) */}
             <Route
               path="/sigedoc/instalacion/options"
               element={<SigedocInstalacionOptions />}
@@ -63,7 +57,6 @@ function App() {
             />
 
             {/* --- RUTAS DE BAJA --- */}
-            {/* Pantalla intermedia (Generar o Subir) */}
             <Route
               path="/sigedoc/baja/options"
               element={<SigedocBajaOptions />}
@@ -73,7 +66,7 @@ function App() {
               path="/sigedoc/baja/options/formulario"
               element={<SigedocBajaForm />}
             />
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>
